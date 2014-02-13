@@ -53,10 +53,19 @@ res.write('Connect to mySql\n');
 req.on('end', function () {
 	if( qs.parse(body).password == 'aaaa'){
 	
-	  
+	var post  = {
+			nume: qs.parse(body).name,
+			on: 1
+	};
 	
 			res.writeHead(200, { 'Content-Type': 'text/html' });
-			var sql_body = '';
+			//var sql_body = '';
+			
+	var query_ins	=	connection.query('INSERT INTO users SET ?', post, function(err, result) {
+							// Neat!
+						});
+						
+					console.log('Welcome ' + qs.parse(body).name+'!');
 			
 	var query1	=	connection.query('SELECT * FROM users WHERE users.on = 1');
 	
@@ -66,15 +75,19 @@ req.on('end', function () {
 			
 			
 			console.log('Users online: ');
+			res.write('Users online: ');
 			
 			query1.on('result', function (rows) {
-			sql_body += rows;
+			//sql_body += rows;
 			
 			
 	
 			
 				
 				console.log(' ', rows.nume)
+				var a = rows.toString();
+				res.write(rows.nume.toString());
+				//console.log(a);
 					 //for (var i in rows) {
 						//console.log(' ', rows[i].nume);
 					//}
@@ -82,7 +95,6 @@ req.on('end', function () {
 			});
 				
 		
-				res.write(sql_body);
 			
 			res.end('<p>Hello <b>' + qs.parse(body).name + '</b></p>');
 		} else res.writeHead(404);
