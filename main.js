@@ -24,23 +24,23 @@ app.createServer(function (req, res) {
 			if(qs.parse(body).password == 'aaaa'){
 
 				var user = {
-						nume: qs.parse(body).name,
-						on: 1 
-						};
+					nume: qs.parse(body).name,
+					on: 1 
+				};
 						
-				f.NewUser(connection,user);
+		f.NewUser(connection,user);
 								
-					res.writeHead(200, { 'Content-Type': 'application/json'});
-						res.end('Hello ' + qs.parse(body).name + '!');	
-							res.write('Users online: ');
+			res.writeHead(200, { 'Content-Type': 'application/json'});
+				res.end('Hello ' + qs.parse(body).name + '!');	
+					res.write('Users online: ');
 							
-						console.log('Welcome ' + qs.parse(body).name+'!');
-							console.log('Users online: ');
+				console.log('Welcome ' + qs.parse(body).name+'!');
+					console.log('Users online: ');
 							
-						f.GetUserQ(connection);	
+				f.GetUserQ(connection);	
 				
-			} else res.writeHead(404);
-					res.end("Wrong password!");
-		});
-	}
+	} else res.writeHead(404);
+			res.end("Wrong password!");
+});
+}
 }).listen(3000);
