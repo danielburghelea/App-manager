@@ -20,22 +20,23 @@ var GetUserQ =	function (connection, res, usern){
 		var GetUserQ = connection.query('SELECT * FROM users WHERE users.on = 1 ORDER BY nume');
 			
 		GetUserQ.on('result', function (rows) {
-				console.log(rows);
-				res.write(JSON.stringify(rows.nume));
-				res.write('<br>');
+		connection.pause();
+			res.write(JSON.stringify(rows.nume));
+			console.log(rows);
+			res.write('<br>');
+		connection.resume();
+		}).on('end', function (){
+			res.end('<a href=/logout>Logout</a>');
 		});
 };
 
 module.exports.GetUserQ = GetUserQ;
 
-
-var Logout = function(connectionn, usern){
-	connection.query('UPDATE users SET on = :on WHERE nume = :nume',
-                     {on: 0, nume: usern});
+var Logout = function(connection, usern){
+	connection.query('UPDATE users SET users.on = '+0+' WHERE users.nume = ' + usern);//, { on: 0, nume: usern});
 };
 
 module.exports.Logout = Logout;
-
 
 var NewUser = function (connection, user){
 				var InsertQuery	= connection.query('INSERT INTO users SET ?', user);
@@ -43,16 +44,14 @@ var NewUser = function (connection, user){
 
 module.exports.NewUser = NewUser;
 
-
-var User = function (name) {
+function User(name) {
   this.nume = name;
 };
 
 module.exports.User = User;
 
-
-var GetName = function() {
+User.prototype.GetName = function() {
 	return this.nume;
 }
 
-module.exports.GetName = GetName;
+module.exports.GetName = User.prototype.GetName;
