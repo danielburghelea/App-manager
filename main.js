@@ -14,33 +14,35 @@ app.createServer(function (req, res) {
 		
 	} else if ('/auth' == req.url && 'POST' == req.method ) {
 	
-			var body = '';				
-			req.on('data', function (chunk) {
-					body += chunk;
-			});
+	var body = '';				
+	req.on('data', function (chunk) {
+			body += chunk;
+	});
 
-		req.on('end', function (){
+req.on('end', function (){
 		
-			if(qs.parse(body).password == 'aaaa'){
-
-				var user = {
-					nume: qs.parse(body).name,
-					on: 1 
-				};
-						
-		f.NewUser(connection,user);
+	if(qs.parse(body).password == 'aaaa'){
+			
+	newuser = new f.User(qs.parse(body).name);	
+		var user = { nume: newuser.nume, on: 1 };
+					
+	f.NewUser(connection, user);
 								
-			res.writeHead(200, { 'Content-Type': 'application/json'});
-				res.end('Hello ' + qs.parse(body).name + '!');	
-					res.write('Users online: ');
+	res.writeHead(200, { 'Content-Type': 'text/html'});
+	res.write('Hello <b>' + newuser.nume + '!<b><br><br>');	
+	res.write('Users online: <br><br>');
 							
-				console.log('Welcome ' + qs.parse(body).name+'!');
-					console.log('Users online: ');
-							
-				f.GetUserQ(connection);	
-				
-	} else res.writeHead(404);
-			res.end("Wrong password!");
+	console.log('Welcome ' + newuser.nume +'!');
+	console.log('Users online: ');
+						
+		var usern = newuser.nume;
+		f.GetUserQ(connection, res, usern);
+	} else {
+		res.writeHead(404);
+		res.end("Wrong password!");
+		}			
 });
-}
+		
+		//res.write('<href="/" Logout>');
+}	
 }).listen(3000);
