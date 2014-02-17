@@ -1,10 +1,8 @@
 var app = require('http');
 var qs = require('querystring');
 var	mysql = require('mysql');
-
 var	config = require('./config');
-var f = require('./functii');
-	
+var f = require('./functii');	
 var connection = mysql.createConnection(config);
 
 app.createServer(function (req, res) {
@@ -43,13 +41,11 @@ app.createServer(function (req, res) {
 				res.writeHead(404);
 				res.end("Wrong password!");
 				};				
-		});
-		
-	} else if ('/logout' == req.url) {
-	console.log(newuser.GetName()+" din afara");	
+		});		
+	} else if ('/logout' == req.url) {	
 		f.Logout(connection, newuser.GetName());
-		req.url = '/';
-		//res.on('end', function(){res.write('gata');});
-	} 
-	
+		res.writeHead(200, { 'Content-Type': 'text/html'});
+		res.write('<b>Logout reusit<br><br>');
+		res.end('<a href=/>Inapoi la login</a>');	
+	} 	
 }).listen(3000);
