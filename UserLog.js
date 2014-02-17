@@ -1,6 +1,5 @@
 exports.FillForm = function(res){ // login form
 			res.writeHead(200, { 'Content-Type': 'text/html' });
-			res.write('Connect to mySql\n');
 				res.end([
 				'<form method="POST" action="/auth">'
 				, '<h1>form</h1>'
@@ -14,22 +13,22 @@ exports.FillForm = function(res){ // login form
 				].join(''));				
 };
 		
-exports.GetUserQ = function (connection, res, usern){ //get online (on = 1) user from DB
+exports.GetUserQ =	function (connection, res, usern){ //get online (on = 1) user from DB
 	connection.query('SELECT * FROM users WHERE users.on = 1 ORDER BY nume')
 			
-	.on('result', function (rows) {
+		.on('result', function (rows) {
 		connection.pause();
 			res.write(JSON.stringify(rows.nume));
 			console.log(rows);
 			res.write('<br>');
 		connection.resume();
-	}).on('end', function (){
-		res.end('<a href=/logout>Logout</a>');
-	});
+		}).on('end', function (){
+			res.end('<br><a href=/logout>Logout</a>');
+		});
 };
 
 exports.Logout = function(connection, usern){ //set on to 0 when logout
-	connection.query("UPDATE users SET users.on = " + 0 + " WHERE users.nume ='" + usern + "'");
+	connection.query("UPDATE users SET users.on = "+0+" WHERE users.nume ='" +usern+"'");
 };
 
 exports.NewUser = function (connection, user){ // add new user
