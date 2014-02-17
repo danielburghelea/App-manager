@@ -33,7 +33,7 @@ var GetUserQ =	function (connection, res, usern){
 module.exports.GetUserQ = GetUserQ;
 
 var Logout = function(connection, usern){
-	connection.query('UPDATE users SET users.on = '+0+' WHERE users.nume = ' + usern);//, { on: 0, nume: usern});
+	connection.query("UPDATE users SET users.on = "+0+" WHERE users.nume ='" +usern+"'");
 };
 
 module.exports.Logout = Logout;
