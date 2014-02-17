@@ -1,4 +1,4 @@
-var FillForm = function(res){
+exports.FillForm = function(res){ // login form
 			res.writeHead(200, { 'Content-Type': 'text/html' });
 			res.write('Connect to mySql\n');
 				res.end([
@@ -14,9 +14,7 @@ var FillForm = function(res){
 				].join(''));				
 };
 		
-module.exports.FillForm = FillForm;
-
-var GetUserQ =	function (connection, res, usern){
+exports.GetUserQ =	function (connection, res, usern){ //get online (on = 1) user from DB
 		var GetUserQ = connection.query('SELECT * FROM users WHERE users.on = 1 ORDER BY nume');
 			
 		GetUserQ.on('result', function (rows) {
@@ -30,28 +28,18 @@ var GetUserQ =	function (connection, res, usern){
 		});
 };
 
-module.exports.GetUserQ = GetUserQ;
-
-var Logout = function(connection, usern){
+exports.Logout = function(connection, usern){ //set on to 0 when logout
 	connection.query("UPDATE users SET users.on = "+0+" WHERE users.nume ='" +usern+"'");
 };
 
-module.exports.Logout = Logout;
-
-var NewUser = function (connection, user){
+exports.NewUser = function (connection, user){ // add new user
 				var InsertQuery	= connection.query('INSERT INTO users SET ?', user);
 };
 
-module.exports.NewUser = NewUser;
-
-function User(name) {
+exports.User = function (name) { // setter for user
   this.nume = name;
 };
 
-module.exports.User = User;
-
-User.prototype.GetName = function() {
+exports.User.prototype.GetName = function() { // getter for user
 	return this.nume;
-}
-
-module.exports.GetName = User.prototype.GetName;
+};
