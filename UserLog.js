@@ -14,26 +14,26 @@ exports.FillForm = function(res){ // login form
 				].join(''));				
 };
 		
-exports.GetUserQ =	function (connection, res, usern){ //get online (on = 1) user from DB
-		var GetUserQ = connection.query('SELECT * FROM users WHERE users.on = 1 ORDER BY nume');
+exports.GetUserQ = function (connection, res, usern){ //get online (on = 1) user from DB
+	connection.query('SELECT * FROM users WHERE users.on = 1 ORDER BY nume')
 			
-		GetUserQ.on('result', function (rows) {
+	.on('result', function (rows) {
 		connection.pause();
 			res.write(JSON.stringify(rows.nume));
 			console.log(rows);
 			res.write('<br>');
 		connection.resume();
-		}).on('end', function (){
-			res.end('<a href=/logout>Logout</a>');
-		});
+	}).on('end', function (){
+		res.end('<a href=/logout>Logout</a>');
+	});
 };
 
 exports.Logout = function(connection, usern){ //set on to 0 when logout
-	connection.query("UPDATE users SET users.on = "+0+" WHERE users.nume ='" +usern+"'");
+	connection.query("UPDATE users SET users.on = " + 0 + " WHERE users.nume ='" + usern + "'");
 };
 
 exports.NewUser = function (connection, user){ // add new user
-				var InsertQuery	= connection.query('INSERT INTO users SET ?', user);
+	connection.query('INSERT INTO users SET ?', user);
 };
 
 exports.User = function (name) { // setter for user
