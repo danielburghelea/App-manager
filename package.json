@@ -2,10 +2,11 @@
   "name": "node-js",
   "version": "0.0.3",
   "description": "node.js on heroku",
-  "main": "web.js",
+  "main": "TrustApp.js",
 
   "dependencies": {
-	"pg": "0.6.15"
+	"pg": "0.6.15",
+	"node-fs": " 0.1.7"
   },
   "engines": {
     "node": "0.10.x",

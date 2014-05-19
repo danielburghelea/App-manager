@@ -2,11 +2,10 @@ var app = require('http');
 var pg = require('pg');
 var qs = require('querystring');
 var UserL = require('./UserLog');
-
+var conString = "postgres://postgres:1Ciocolata@localhost:5432/users";
 var client = new pg.Client(conString);
 var port = process.env.PORT || 5000;
-
-var conString = "postgres://postgres:1Ciocolata@localhost:5432/users";
+//var io = require('socket.io').listen(app);
 
 client.connect();
 
@@ -54,3 +53,13 @@ if ('/' == req.url) { //if home, req url =127.0.0.1:8080/
 		res.end('<a href=/>Back to login</a>');	
 };
 }).listen(port);
+
+/*
+io.sockets.on('connection', function (socket) {
+    //our other events...
+	
+	socket.on('setPseudo', function (data) {
+		socket.set('pseudo', data);
+	});
+
+});*/
