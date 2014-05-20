@@ -54,6 +54,35 @@ exports.GetUserQ = function(client, res, fs, name){ //get all online users but h
 		});	
 };
 
+exports.LogoutHTML = function(res, fs){
+
+		res.writeHead(200, { 'Content-Type': 'text/html'});
+	
+		fs.readFile('./html/logout.html', function (err, html) {
+			if (err) {
+				throw err; 
+			}
+		res.write(html);
+		res.end();
+		});
+	};
+	
+
+exports.GetUsersHTML = function(res, fs, db, tName){
+
+	res.writeHead(200, { 'Content-Type': 'text/html'});
+		
+		fs.readFile('./html/getuser.html', function (err, html) { //page for user list
+			if (err) {
+				throw err; 
+			}
+			res.write(html);
+			
+		exports.NewUserQ(db, tName);
+		exports.GetUserQ(db, res, fs, tName);
+		});
+}
+
 exports.NewUserQ = function (client, user){ // add new user
 	client.query('INSERT INTO users(name, on_p) values($1, $2)', [user, 1]);
 };
@@ -65,3 +94,5 @@ exports.ExistingUsers = function(client, usern){ //set on to 0 when logout
 exports.LogoutQ = function(client, usern){ //set on to 0 when logout
 	client.query('UPDATE users SET on_p = $1 WHERE name =$2', [0, usern]);
 };
+
+
