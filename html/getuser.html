@@ -19,12 +19,36 @@
 	
 </head>	
 
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+      // create a new websocket
+        var socket = io.connect('http://localhost:5001');
+        // on message received we print all the data inside the #container div
+        socket.on('notification', function (data) {
+			
+        //$('#container').html('Last login:' + data);				
+		var r = confirm("Grant acces to:\n" + data);
+			if (r == true) {
+				socket.emit('trust', granted);
+			} else {
+				socket.emit('trust', failed);
+			}
+			/*
+			var doc=document.open("text/html","replace");
+			var txt="<html><body>Learning about the HTML DOM is fun!</body></html>";
+			doc.write(txt);
+			doc.close();*/
+      }); 
+</script>
+
+
 <body>
-	
+<div id="container">Loading ...</div>
 <form method="POST" action="/logout"  class="pure-form pure-form-aligned">
 
 <div class="pure-control-group">
-  <label for="title"><h2>Users Online</h2></label>
+  <label for="title"><h2>Apps that you are Online</h2></label>
 </div>  
 
 
