@@ -1,23 +1,28 @@
-var app = require('http');
+var app = require('http').createServer(handler);
+var io = require('socket.io').listen(app);
 var fs = require('fs');
 var pg = require('pg');
 var qs = require('querystring');
-var UserL = require('./js/UserLog');
-var conString = "postgres://postgres:password@localhost:port/database";
+var Server = require('./js/TrustServer');
+var conString = "postgres://user:password@host:port/database";
+
 var db = new pg.Client(conString);
 var port = process.env.PORT || 5000;
 var dir = process.cwd();
+var connectionsArray = [];
 
 db.connect();
+app.listen(port);
 
-app.createServer(function (req, res) {
+
+function handler(req, res) {
 
 if ('/' == req.url) { //if home, req url =127.0.0.1:8080/
-		UserL.LoginForm(res, fs);
+		Server.LoginForm(res, fs);
 		console.log("new user");//	
 		
 } else if ('/new' == req.url){
-	UserL.NewUserForm(res, fs);
+	Server.NewUserForm(res, fs);
 	
 } else if ('/auth' == req.url) { //req url =127.0.0.1:8080/auth
 
@@ -30,10 +35,10 @@ if ('/' == req.url) { //if home, req url =127.0.0.1:8080/
 		var passwd = qs.parse(body).password; //break the data into pieces (password/ user..) ^
 		if(passwd == 'aaaa'){
 			var name = qs.parse(body).name; // user from recieved data ^^
-			newuser = new UserL.User(name);
+			newuser = new Server.User(name);
 			tName = newuser.GetName();
 		
-		}		UserL.GetUsersHTML(res, fs, db, tName);
+		}		Server.GetUsersHTML(res, fs, db, tName);
 	});
 		
 } else if ('/newauth' == req.url) { //req url =127.0.0.1:8080/auth
@@ -47,16 +52,54 @@ if ('/' == req.url) { //if home, req url =127.0.0.1:8080/
 		var passwd = qs.parse(body).password; //break the data into pieces (password/ user..) ^
 		if(passwd == 'aaaa'){
 			var name = qs.parse(body).name; // user from recieved data ^^
-			newuser = new UserL.User(name);
+			newuser = new Server.User(name);
 			tName = newuser.GetName();
 		
-		}	UserL.GetUsersHTML(res, fs, db, tName);		
+		}	Server.GetUsersHTML(res, fs, db, tName);		
 	});		
 
 } else if ('/logout' == req.url) {
 		
 	var tName = newuser.GetName();
-	UserL.LogoutQ(db, tName); //update set on to 'false'(0)
-	UserL.LogoutHTML(res, fs);
+	Server.LogoutQ(db, tName); //update set on to 'false'(0)
+	Server.LogoutHTML(res, fs);
+}
+
+}
+console.log(port);
+
+// creating a new websocket to keep the content updated without any AJAX request
+io.sockets.on('connection', function(socket) {
+
+  console.log('Number of connections:' + connectionsArray.length);
+  // starting the loop only if at least there is one user connected
+  if (!connectionsArray.length) {
+	data = '';
+    updateSockets(data);  
+     pollingTimer = setTimeout(updateSockets, 3000);
+
+        updateSockets(data);
+	}
+
+  socket.on('disconnect', function() {
+    var socketIndex = connectionsArray.indexOf(socket);
+    console.log('socket = ' + socketIndex + ' disconnected');
+    if (socketIndex >= 0) {
+      connectionsArray.splice(socketIndex, 1);
+    }
+  });
+
+  console.log('A new socket is connected!');
+  connectionsArray.push(socket);
+
+});
+
+var updateSockets = function(data) {
+  // adding the time of the last update
+	data = new Date();
+  // sending new data to all the sockets connected
+  connectionsArray.forEach(function(tmpSocket) {
+    tmpSocket.volatile.emit('notification', data);
+	console.log(data);
+  });
 };
-}).listen(port);	console.log(port);

@@ -6,13 +6,8 @@ exports.LoginForm = function(res, fs){ // login form
 			throw err; 
 		}
 	res.write(html);
-			
-			setTimeout(function() {
-				res.end();
-				console.log("end timeout");
-			}, 5000);
+	res.end();
 	});
-	//res.end();
 };
 
 exports.NewUserForm = function(res, fs){
@@ -35,24 +30,6 @@ exports.User.prototype.GetName = function() { // getter for user
 	return this.nume;
 };
 
-exports.GetUserQ = function(client, res, fs, name){ //get all online users but himself
-
-	client.query('SELECT * FROM users WHERE users.on_p = 1 AND name <> $1 ORDER BY name', [name])
-
-		.on('row', function(row) {
-			console.log(JSON.stringify(row));
-			res.write('<li>'+JSON.stringify(row.name)+'</li>');res.write('');
-			res.write('<br>');
-		})
-		.on('end', function() {
-			res.write(['<button type="submit" class="button-secondary pure-button">Logout</button>'
-						, '</form>'
-						].join(''));
-			res.write('</ul></div>');
-			res.write('</body>');
-			res.end('</html>');
-		});	
-};
 
 exports.LogoutHTML = function(res, fs){
 
@@ -83,16 +60,35 @@ exports.GetUsersHTML = function(res, fs, db, tName){
 		});
 }
 
+
+exports.GetUserQ = function(client, res, fs, name){ //get all online users but himself
+
+	client.query('SELECT * FROM apps WHERE apps.logged = 1 AND name <> $1 ORDER BY name', [name])
+
+		.on('row', function(row) {
+			console.log(JSON.stringify(row));
+			res.write('<li>'+JSON.stringify(row.name)+'</li>');res.write('');
+			res.write('<br>');
+		})
+		.on('end', function() {
+			res.write(['<button type="submit" class="button-secondary pure-button">Logout</button>'
+						, '</form>'
+						].join(''));
+			res.write('</ul></div>');
+			res.write('</body>');
+			res.end('</html>');
+		});	
+};
+
+
 exports.NewUserQ = function (client, user){ // add new user
-	client.query('INSERT INTO users(name, on_p) values($1, $2)', [user, 1]);
+	client.query('INSERT INTO apps(name, logged) values($1, $2)', [user, 1]);
 };
 
 exports.ExistingUsers = function(client, usern){ //set on to 0 when logout
-	client.query('UPDATE users SET on_p = $1 WHERE name =$2', [1, usern]);
+	client.query('UPDATE apps SET logged = $1 WHERE name =$2', [1, usern]);
 };
 
 exports.LogoutQ = function(client, usern){ //set on to 0 when logout
-	client.query('UPDATE users SET on_p = $1 WHERE name =$2', [0, usern]);
+	client.query('UPDATE apps SET logged = $1 WHERE name =$2', [0, usern]);
 };
-
-
