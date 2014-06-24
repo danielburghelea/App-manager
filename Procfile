@@ -1,1 +1,0 @@
-web: node TrustApp.js
