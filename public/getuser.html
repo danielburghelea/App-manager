@@ -37,6 +37,11 @@
 		var r = confirm("Grant acces to:\n" + data.Email + data.OS);
 			if (r == true) {
 				socket.emit('confirmation2', data, "granted");
+				document.getElementById(data.Host).innerHTML = "Last loged in near:" + data.City + data.Country;
+				document.getElementById(data.Host).innerHTML += "From:" + data.From;
+				document.getElementById(data.Host).innerHTML += "Operating sistem:" + data.OS;
+				document.getElementById(data.Host).innerHTML += "User-Agent:" + data.UA;
+				document.getElementById(data.Host).innerHTML += "Last loged in:";
 			} else {
 				socket.emit('confirmation2', data, "failed");
 			}

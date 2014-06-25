@@ -63,11 +63,8 @@ module.exports = function(io, dbConnection, app) {
 			eData = encrypt(ddata);
 			io.sockets.in(data.Email).emit('confirmation3', eData)
 			console.log(data.Email);
-			if (ddata == 'granted')
-				database.AddAppSpecQ(dbConnection, data.Country, data.UA, data.OS, data.City, data.From, data.Email, data.Host, function(err, result) {
-					//function(req, res){res.redirect('/profile')}
-					console.log(result)
-				});
+			if(ddata == 'granted')
+				database.AddAppSpecQ(dbConnection, data.Country, data.UA, data.OS, data.City, data.From, data.Email, data.Host)//, callback)
 		});
 	});
 };

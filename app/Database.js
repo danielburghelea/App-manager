@@ -3,14 +3,18 @@ exports.GetUserAppsQ = function(client, res, email){ //get all apps users but hi
 	res.write('</div>' +'<h2><div class="page-header text-center">Logged in as:' + 
 	'<div id="email">' + email + '</div></div></h2>');
 	
-	client.query('SELECT * FROM apps WHERE apps.logged = 1 AND owner = $1 ORDER BY name', [email]) // name  = owner name
+	client.query('SELECT * FROM apps WHERE owner = $1 ORDER BY name', [email]) // name  = owner name
 
 		.on('row', function(row) {
 			console.log(JSON.stringify(row));
 			res.write('<div class="col-sm-6 col-sm-offset-3"><div class="well">' + 
-				row.name + '<hr><br>')
-			if(row.country)
-				res.write('Country: ' + row.country)
+				row.name + '<hr><div id='+row.name+'></div>')
+			if(row.country){
+				res.write('<b>Last logged in near: </b>' + row.city + ', ' + row.country + '<br>');
+				res.write('<b>From: </b>' + row.ua + '<br>');
+				res.write('<b>O.S.: </b>' + row.platform + '<br>');
+				res.write('<b>Client version: </b>' + row.vers + '<br>');
+			}
 			else
 				res.write('Never loogen in.');
 			res.write('<hr>' +	
@@ -118,14 +122,11 @@ exports.CheckUserAppQ = function (client, name, email, callback){
 
 
 // add app to my list
-exports.AddAppSpecQ = function (client, country, ua, platform, city, appVersion, owner, name, callback){ 
-console.log(country, ua, platform, city, appVersion, owner, name)
-	client.query('UPDATE apps SET country = $1, ua = $2, platform = $3, city = $4, vers = $5 WHERE owner =$6 and name = $7',
-	[country, ua, platform, city, appVersion, owner, name], function(err, result) {
-    console.log("Row count: %d",result);
+exports.AddAppSpecQ = function (client, country, ua, platform, city, appVersion, owner, name){ //, callbac
 	
-	if(result == 0)
-		 callback(null, 'done');
-	else callback(null, 'done');
-	})
+	console.log(country, ua, platform, city, appVersion, owner, name)
+	
+	client.query('UPDATE apps SET country = $1, ua = $2, platform = $3, city = $4, vers = $5 , logged=1 WHERE owner =$6 and name = $7',
+	[country, ua, platform, city, appVersion, owner, name])//, function(err, result) {
+	
 };
